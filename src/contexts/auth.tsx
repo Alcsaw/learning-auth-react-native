@@ -13,13 +13,13 @@ interface AuthContextData {
   loggedIn: boolean;
   user: User | null;
   loading: boolean;
-  login(): Promise<void>;
+  login(email: string, password: string): Promise<void>;
   logout(): void;
 };
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
-export const AuthProvider: React.FC = ({children}) => {
+export const AuthProvider: React.FC = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -34,14 +34,17 @@ export const AuthProvider: React.FC = ({children}) => {
 
         setUser(JSON.parse(storageUser));
         setLoading(false);
+      } else {
+        // not yet authenticated
+        setLoading(false);
       }
     };
 
     loadStorageData();
   }, []);
 
-  async function login() {
-    const response = await auth.login();
+  async function login(email: string, password: string) {
+    const response = await auth.login(email, password);
 
     setUser(response.user);
 
@@ -58,7 +61,7 @@ export const AuthProvider: React.FC = ({children}) => {
   };
 
   return (
-    <AuthContext.Provider value={{loggedIn: !!user, user, loading, login, logout}} >
+    <AuthContext.Provider value={{ loggedIn: !!user, user, loading, login, logout }} >
       {children}
     </AuthContext.Provider>
   );

@@ -1,3 +1,5 @@
+import api from './api';
+
 interface Response {
   token: string;
   user: {
@@ -6,16 +8,15 @@ interface Response {
   };
 };
 
-export function login(): Promise<Response> {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve({
-        token: '3whj45rhetrbdjbfgusiehrtdusthei7rhtsejkrhtu',
-        user: {
-          name: 'Alcsaw',
-          email: 'alcsaw@hotmail.com'
-        },
-      })
-    }, 1000);
+export async function login(email: string, password: string): Promise<Response> {
+  console.log('consulting API');
+
+  const response = await api.post('/sessions', {
+    email,
+    password
   });
+  console.log(response.data);
+
+  const user = response.data;
+  return user;
 };
